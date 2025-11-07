@@ -1,5 +1,5 @@
 function Home() {
-    return <div>Teste</div>
+    return <div>Hellow World!</div>
 }
 
 export default Home;
