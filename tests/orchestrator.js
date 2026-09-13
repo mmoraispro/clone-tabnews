@@ -7,6 +7,8 @@ import user from "models/user.js";
 import session from "models/session.js";
 
 const emailHttpUrl = `http://${process.env.EMAIL_HTTP_HOST}:${process.env.EMAIL_HTTP_PORT}`;
+const regexUUID =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
 
 async function waitForAllServices() {
   await waitForWebServer();
@@ -87,6 +89,11 @@ async function getLastEmail() {
   return lastEmailItem;
 }
 
+function extractUUID(text) {
+  const match = text.match(regexUUID);
+  return match ? match[0] : null;
+}
+
 const orchestrator = {
   waitForAllServices,
   clearDatabase,
@@ -95,6 +102,7 @@ const orchestrator = {
   createSession,
   deleteAllEmails,
   getLastEmail,
+  extractUUID,
 };
 
 export default orchestrator;
