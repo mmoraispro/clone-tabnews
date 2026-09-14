@@ -1,6 +1,6 @@
 import database from "infra/database.js";
-import { ValidationError, NotFoundError } from "infra/errors.js";
 import password from "models/password.js";
+import { ValidationError, NotFoundError } from "infra/errors.js";
 
 async function findOneById(id) {
   const userFound = await runSelectQuery(id);
@@ -147,8 +147,8 @@ async function update(username, userInputValues) {
 
   const userWithNewValues = { ...currentUser, ...userInputValues };
 
-  const updateUser = await runUpdateQuery(userWithNewValues);
-  return updateUser;
+  const updatedUser = await runUpdateQuery(userWithNewValues);
+  return updatedUser;
 
   async function runUpdateQuery(userWithNewValues) {
     const results = await database.query({
@@ -224,12 +224,37 @@ async function hashPasswordInObject(userInputValues) {
   userInputValues.password = hashedPassword;
 }
 
+async function setFeatures(userId, features) {
+  const updatedUser = await runUpdateQuery(userId, features);
+  return updatedUser;
+
+  async function runUpdateQuery(userId, features) {
+    const results = await database.query({
+      text: `
+        UPDATE
+          users
+        SET
+          features = $2,
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
+      ;`,
+      values: [userId, features],
+    });
+
+    return results.rows[0];
+  }
+}
+
 const user = {
   create,
   findOneById,
   findOneByUsername,
   findOneByEmail,
   update,
+  setFeatures,
 };
 
 export default user;
