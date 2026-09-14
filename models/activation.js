@@ -72,16 +72,24 @@ async function markTokenAsUsed(activationTokenId) {
         UPDATE
           user_activation_tokens
         SET
-          used_at = timezone('utc', now()),
-          updated_at = timezone('utc', now())
+          used_at = timezone('utc', NOW()),
+          updated_at = timezone('utc', NOW())
         WHERE
           id = $1
+          AND used_at IS NULL
+          AND expires_at > NOW()
         RETURNING
           *
       ;`,
       values: [activationTokenId],
     });
 
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O token de ativação informado não foi encontrado ou expirou.",
+        action: "Faça um novo cadastro.",
+      });
+    }
     return results.rows[0];
   }
 }
