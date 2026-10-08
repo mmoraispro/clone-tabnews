@@ -115,7 +115,7 @@ async function activateUserByUserId(userId) {
 
 async function sendEmailToUser(user, activationToken) {
   await email.send({
-    from: "Ativar <contato@mail.com>",
+    from: "Ativar <ativar@notify.mirextecnologia.com.br>",
     to: user.email,
     subject: "Ative seu cadastro no site!",
     text: `${user.username}, clique no link abaixo para ativar seu cadastro no site:
