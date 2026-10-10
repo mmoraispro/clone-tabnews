@@ -12,23 +12,23 @@ export default function StatusPage() {
 
   return (
     <>
-      <UpDateAt data={data} isLoading={isLoading} />
+      <UpDatedAt data={data} isLoading={isLoading} />
       <DatabaseStatus data={data} isLoading={isLoading} />
     </>
   );
 }
 
-function UpDateAt({ data, isLoading }) {
-  const updateAtText =
-    isLoading || !data?.update_at
+function UpDatedAt({ data, isLoading }) {
+  const updatedAtText =
+    isLoading || !data?.updated_at
       ? LOADING
-      : new Date(data.update_at).toLocaleString("pt-BR");
+      : new Date(data.updated_at).toLocaleString("pt-BR");
 
   return (
     <>
       <h1>Status</h1>
       <div>
-        <b>Última atualização:</b> {updateAtText}
+        <b>Última atualização:</b> {updatedAtText}
       </div>
     </>
   );
