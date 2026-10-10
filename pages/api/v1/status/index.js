@@ -3,16 +3,14 @@ import database from "infra/database.js";
 import controller from "infra/controller.js";
 import authorization from "models/authorization.js";
 
-const router = createRouter();
-
-router.use(controller.injectAnonymousOrUser);
-router.get(getHandler);
-
-export default router.handler(controller.errorHandlers);
+export default createRouter()
+  .use(controller.injectAnonymousOrUser)
+  .get(getHandler)
+  .handler(controller.errorHandlers);
 
 async function getHandler(request, response) {
   const userTryingToGet = request.context.user;
-  const updateAt = new Date().toISOString();
+  const updatedAt = new Date().toISOString();
 
   const databaseVersionResult = await database.query("SHOW server_version;");
   const databaseVersionValue = databaseVersionResult.rows[0].server_version;
@@ -33,7 +31,7 @@ async function getHandler(request, response) {
     databaseOpenedConnectionsResult.rows[0].count;
 
   const statusObject = {
-    update_at: updateAt,
+    updated_at: updatedAt,
     dependencies: {
       database: {
         version: databaseVersionValue,
@@ -49,5 +47,5 @@ async function getHandler(request, response) {
     statusObject,
   );
 
-  response.status(200).json(secureOutputValues);
+  return response.status(200).json(secureOutputValues);
 }
